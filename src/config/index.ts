@@ -1,8 +1,5 @@
 import merge from 'lodash.merge'
 
-// set up a default for our NODE_ENV
-// node_env equals whatever it was, but if it wasn't anything then set to "development"
-// don't want to overwrite it if it already existed, but if it didn't please set to "development"
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
 
 const stage = process.env.STAGE || 'local';
@@ -20,7 +17,6 @@ if (stage === 'production') {
 }
 
 // export default config underneath our env config
-// these are our defaults, can be over written depending on what environment we're in.
 export default merge({
   stage,
   env: process.env.NODE_ENV,
