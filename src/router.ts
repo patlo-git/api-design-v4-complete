@@ -6,22 +6,16 @@ import { getOneUpdate, getUpdates, createUpdate, updateUpdate, deleteUpdate } fr
 
 const router = Router();
 
-// this sub app will be our api.
-// one or two routes that don't share same config as this for everything that needs to be authenticated.
-//and then another spot for things that don't need to be authenticated.
-
 /**
  * Product
  */
 router.get('/product', getProducts);
-//id is our route parameter
 router.get('/product/:id', getOneProduct);
-// body from the incoming json object (req.body) and passing it the field we want to enforce
 
 // update a product
 router.put('/product/:id', body('name').isString(), handleInputErrors, updateProduct);
 
-//create a product
+// create a product
 router.post('/product', body('name').isString(), handleInputErrors, createProduct);
 router.delete('/product/:id', deleteProduct);
 
@@ -34,7 +28,7 @@ router.get('/update/:id', getOneUpdate);
 
 // updating an update
 router.put('/update/:id',
-// you could also put the following inputs in another file and import them in.
+// could also put the following inputs in another file and import them in.
   body('title').optional(),
   body('body').optional(),
   body('status').isIn(['IN_PROGRESS', 'SHIPPED', 'DEPRECATED']).optional(),
@@ -59,12 +53,14 @@ router.delete('/update/:id', deleteUpdate);
  */
 router.get('/updatepoint', () => {});
 router.get('/updatepoint/:id', () => {});
+
 router.put('/updatepoint/:id',
   body('name').optional().isString(),
   body('description').optional().isString(),
   handleInputErrors, (req, res) => {
     res.json({message: 'updatepoint:id PUT is alll goood'})
 });
+
 router.post('/updatepoint',
   body('name').isString(),
   body('description').isString(),
@@ -72,6 +68,7 @@ router.post('/updatepoint',
   handleInputErrors, (req, res) => {
     res.json({message: 'updatepoint:id POST is alll goood'})
 });
+
 router.delete('/updatepoint/:id', () => {});
 
 export default router;

@@ -1,11 +1,12 @@
 import prisma from "../db";
 
-// Get all
+// Get all products
 export const getProducts = async (req, res) => {
-  // in the products handler but querying the user table
-  // have to query for the user again here b/c we only have the id and name via req.user, not the other stuff we need to access the product
+  // query user table from products handler
+  // we have user.id and user.id from req.user
+  // need to query for user again
+  // to get other stuff to access the product
   const user = await prisma.user.findUnique({
-    // if doing a query in prisma you need a where property
     where: {
       id: req.user.id
     },
@@ -14,13 +15,12 @@ export const getProducts = async (req, res) => {
     }
   })
 
-  // will be an array, which is where all the products we have goes on our user.products[]...connects to all products in our Product table
+  // connects to all products in our Product table
   res.json({data: user.products});
 }
 
 // Get one product
 export const getOneProduct = async (req, res) => {
-  // getting id from req object. params is route parameter. Access urlencoded from servers.ts and the : in our 'GET' product/:id route. Turning the parameters and the query string etc to an object for us.
   const id = req.params.id;
 
   const product = await prisma.product.findFirst({
@@ -45,7 +45,6 @@ export const createProduct = async (req, res, next) => {
   
     res.json({data: product});
   } catch (e) {
-    // error code defaults to 500, so no need to include it
     console.error(e);
     next(e);
   }
@@ -54,7 +53,6 @@ export const createProduct = async (req, res, next) => {
 // Update one product
 export const updateProduct = async (req, res) => {
   const updated = await prisma.product.update({
-    // update is kind of like a find and a write
     where: {
       // Created an index b/c this is a unique combination we don't have access to
       id_belongsToId: {
@@ -62,18 +60,17 @@ export const updateProduct = async (req, res) => {
         belongsToId: req.user.id
       }
     },
-    // when you find it this is the data you use to update it.
+    // when query comes back update with this data
     data: {
       name: req.body.name
     }
   })
 
-  // send back the thing you updated with the updates on it, so the client doesn't have to make another request to get the updated thing
+  // return updated item, so client doesn't have to make another request to get updated item
   res.json({data: updated})
 }
 
 export const deleteProduct = async (req, res) => {
-  // if we delete many we only get info on what we deleted, but if we delete one, same with update, we get what we deleted.
   const deleted = await prisma.product.delete({
     where: {
       id_belongsToId: {
